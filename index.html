@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Blue Angels Call Sign Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+  :root{
+    --navy:#0a1628;
+    --navy-mid:#162a4a;
+    --navy-light:#1e3a5f;
+    --gold:#c5a44e;
+    --gold-light:#e2c97e;
+    --gold-bright:#ffd700;
+    --white:#f0f0f0;
+    --sky:#4a90c4;
+    --red:#c0392b;
+  }
+
+  html{scroll-behavior:smooth}
+
+  body{
+    font-family:'Roboto',sans-serif;
+    background:var(--navy);
+    color:var(--white);
+    min-height:100vh;
+    overflow-x:hidden;
+  }
+
+  /* ── star field background ── */
+  .stars{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(1px 1px at 10% 20%, rgba(255,255,255,.6) 50%, transparent 100%),
+      radial-gradient(1px 1px at 30% 60%, rgba(255,255,255,.4) 50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 50% 10%, rgba(255,255,255,.7) 50%, transparent 100%),
+      radial-gradient(1px 1px at 70% 80%, rgba(255,255,255,.5) 50%, transparent 100%),
+      radial-gradient(1px 1px at 90% 40%, rgba(255,255,255,.4) 50%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 15% 85%, rgba(255,255,255,.6) 50%, transparent 100%),
+      radial-gradient(1px 1px at 60% 45%, rgba(255,255,255,.3) 50%, transparent 100%),
+      radial-gradient(1px 1px at 85% 15%, rgba(255,255,255,.5) 50%, transparent 100%);
+  }
+
+  /* ── layout ── */
+  .container{
+    position:relative;z-index:1;
+    max-width:680px;margin:0 auto;padding:20px;
+    min-height:100vh;display:flex;flex-direction:column;
+  }
+
+  /* ── header ── */
+  header{text-align:center;padding:30px 0 10px}
+
+  .wings{
+    display:inline-block;position:relative;margin-bottom:8px;
+  }
+  .wings svg{width:160px;height:auto}
+
+  h1{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;font-size:clamp(1.8rem,5vw,2.6rem);
+    text-transform:uppercase;letter-spacing:4px;
+    color:var(--gold);
+    text-shadow:0 0 30px rgba(197,164,78,.3);
+  }
+  .subtitle{
+    font-size:.95rem;color:var(--sky);letter-spacing:2px;
+    text-transform:uppercase;margin-top:4px;font-weight:300;
+  }
+
+  /* ── gold divider ── */
+  .divider{
+    height:2px;margin:24px auto;width:60%;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+  }
+
+  /* ── progress bar ── */
+  .progress-wrap{
+    background:var(--navy-mid);border-radius:20px;height:10px;
+    margin:16px auto 30px;width:100%;overflow:hidden;
+    border:1px solid rgba(197,164,78,.25);
+  }
+  .progress-bar{
+    height:100%;width:0%;border-radius:20px;
+    background:linear-gradient(90deg,var(--gold),var(--gold-bright));
+    transition:width .5s ease;
+  }
+
+  /* ── question card ── */
+  .card{
+    background:linear-gradient(145deg,var(--navy-mid),var(--navy));
+    border:1px solid rgba(197,164,78,.2);
+    border-radius:16px;padding:36px 32px;
+    box-shadow:0 8px 40px rgba(0,0,0,.4);
+    animation:fadeUp .45s ease;
+  }
+  @keyframes fadeUp{
+    from{opacity:0;transform:translateY(24px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+
+  .card.hidden{display:none}
+
+  .question-number{
+    font-family:'Oswald',sans-serif;
+    font-size:.85rem;letter-spacing:3px;text-transform:uppercase;
+    color:var(--gold);margin-bottom:12px;
+  }
+  .question-text{
+    font-size:1.25rem;font-weight:500;margin-bottom:24px;
+    line-height:1.5;
+  }
+
+  /* ── inputs ── */
+  input[type="text"]{
+    width:100%;padding:14px 18px;font-size:1.05rem;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(197,164,78,.3);
+    border-radius:10px;color:var(--white);
+    font-family:'Roboto',sans-serif;
+    transition:border-color .3s,box-shadow .3s;
+    outline:none;
+  }
+  input[type="text"]::placeholder{color:rgba(240,240,240,.35)}
+  input[type="text"]:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(197,164,78,.15);
+  }
+
+  /* ── select (pronouns) ── */
+  select{
+    width:100%;padding:14px 18px;font-size:1.05rem;
+    background:rgba(255,255,255,.06);
+    border:1px solid rgba(197,164,78,.3);
+    border-radius:10px;color:var(--white);
+    font-family:'Roboto',sans-serif;
+    transition:border-color .3s,box-shadow .3s;
+    outline:none;margin-top:12px;cursor:pointer;
+    appearance:none;-webkit-appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23c5a44e' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat:no-repeat;background-position:right 16px center;
+  }
+  select:focus{
+    border-color:var(--gold);
+    box-shadow:0 0 0 3px rgba(197,164,78,.15);
+  }
+  select option{background:var(--navy-mid);color:var(--white)}
+
+  /* ── option grid (for multiple choice) ── */
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .options.three-col{grid-template-columns:1fr 1fr 1fr}
+
+  .option-btn{
+    padding:14px 12px;font-size:.95rem;font-weight:500;
+    background:rgba(255,255,255,.05);
+    border:1px solid rgba(197,164,78,.2);
+    border-radius:10px;color:var(--white);cursor:pointer;
+    transition:all .25s;text-align:center;
+    font-family:'Roboto',sans-serif;
+  }
+  .option-btn:hover{
+    background:rgba(197,164,78,.12);
+    border-color:var(--gold);
+    transform:translateY(-2px);
+    box-shadow:0 4px 15px rgba(0,0,0,.3);
+  }
+  .option-btn.selected{
+    background:rgba(197,164,78,.18);
+    border-color:var(--gold);
+    color:var(--gold-light);
+    box-shadow:0 0 15px rgba(197,164,78,.15);
+  }
+
+  /* ── buttons ── */
+  .btn-row{display:flex;gap:12px;margin-top:28px;justify-content:flex-end}
+
+  .btn{
+    font-family:'Oswald',sans-serif;
+    font-size:1rem;font-weight:600;letter-spacing:2px;
+    text-transform:uppercase;padding:14px 36px;
+    border:none;border-radius:10px;cursor:pointer;
+    transition:all .3s;
+  }
+  .btn-primary{
+    background:linear-gradient(135deg,var(--gold),var(--gold-light));
+    color:var(--navy);
+  }
+  .btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 6px 25px rgba(197,164,78,.35);
+  }
+  .btn-primary:disabled{
+    opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;
+  }
+  .btn-secondary{
+    background:transparent;
+    border:1px solid rgba(197,164,78,.3);
+    color:var(--gold);
+  }
+  .btn-secondary:hover{
+    background:rgba(197,164,78,.08);
+    border-color:var(--gold);
+  }
+
+  /* ── intro screen ── */
+  #intro{text-align:center;padding-top:16px}
+  #intro p{
+    font-size:1.05rem;line-height:1.7;color:rgba(240,240,240,.8);
+    max-width:520px;margin:0 auto 30px;
+  }
+  #intro .btn{margin:0 auto}
+
+  /* ── result screen ── */
+  #result{text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center;padding:20px 0}
+  #result.hidden{display:none}
+
+  .result-badge{
+    margin:0 auto 16px;
+    width:140px;height:140px;border-radius:50%;
+    border:3px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    background:radial-gradient(circle,var(--navy-light),var(--navy));
+    box-shadow:0 0 50px rgba(197,164,78,.2),inset 0 0 30px rgba(0,0,0,.4);
+    animation:badgePulse 2s ease-in-out infinite;
+  }
+  @keyframes badgePulse{
+    0%,100%{box-shadow:0 0 50px rgba(197,164,78,.2),inset 0 0 30px rgba(0,0,0,.4)}
+    50%{box-shadow:0 0 70px rgba(197,164,78,.35),inset 0 0 30px rgba(0,0,0,.4)}
+  }
+  .result-badge svg{width:80px;height:auto}
+
+  .result-label{
+    font-family:'Oswald',sans-serif;
+    font-size:1rem;letter-spacing:4px;text-transform:uppercase;
+    color:var(--sky);margin-bottom:6px;
+  }
+  .callsign{
+    font-family:'Oswald',sans-serif;
+    font-size:clamp(2.8rem,8vw,4.2rem);
+    font-weight:700;letter-spacing:4px;
+    text-transform:uppercase;
+    color:var(--gold-bright);
+    text-shadow:0 0 40px rgba(255,215,0,.35);
+    margin-bottom:10px;
+    animation:fadeUp .6s ease;
+  }
+  .callsign-meaning{
+    font-size:1rem;color:rgba(240,240,240,.7);
+    max-width:440px;margin:0 auto 30px;line-height:1.6;
+    font-style:italic;
+  }
+
+  .result-details{
+    background:rgba(255,255,255,.04);
+    border:1px solid rgba(197,164,78,.15);
+    border-radius:12px;padding:20px 24px;
+    max-width:400px;margin:0 auto 28px;text-align:left;
+  }
+  .result-details h3{
+    font-family:'Oswald',sans-serif;
+    font-size:.85rem;letter-spacing:3px;text-transform:uppercase;
+    color:var(--gold);margin-bottom:12px;
+  }
+  .detail-row{
+    display:flex;justify-content:space-between;align-items:baseline;gap:16px;
+    padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);
+    font-size:.9rem;
+  }
+  .detail-row:last-child{border-bottom:none}
+  .detail-label{color:rgba(240,240,240,.5);white-space:nowrap;flex-shrink:0}
+  .detail-value{color:var(--white);font-weight:500;text-align:right;word-break:break-word}
+
+  .result-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+
+  /* ── share menu ── */
+  .share-wrap{position:relative;display:inline-block}
+  .share-menu{
+    position:absolute;bottom:calc(100% + 10px);left:50%;transform:translateX(-50%);
+    background:var(--navy-mid);border:1px solid rgba(197,164,78,.3);
+    border-radius:12px;padding:8px;min-width:200px;
+    box-shadow:0 8px 30px rgba(0,0,0,.5);
+    display:none;flex-direction:column;gap:4px;
+    animation:fadeUp .25s ease;
+    z-index:10;
+  }
+  .share-menu.open{display:flex}
+  .share-menu::after{
+    content:'';position:absolute;top:100%;left:50%;transform:translateX(-50%);
+    border:8px solid transparent;border-top-color:rgba(197,164,78,.3);
+  }
+  .share-option{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 14px;border-radius:8px;
+    background:transparent;border:none;color:var(--white);
+    font-family:'Roboto',sans-serif;font-size:.9rem;
+    cursor:pointer;transition:background .2s;text-align:left;
+  }
+  .share-option:hover{background:rgba(197,164,78,.12)}
+  .share-option svg{width:18px;height:18px;flex-shrink:0;fill:currentColor}
+
+  /* ── footer ── */
+  footer{
+    text-align:center;padding:30px 0 16px;
+    font-size:.75rem;letter-spacing:1px;
+    color:rgba(240,240,240,.25);
+  }
+
+  /* ── responsive ── */
+  @media(max-width:520px){
+    .card{padding:28px 20px}
+    .options{grid-template-columns:1fr 1fr}
+    .options.three-col{grid-template-columns:1fr 1fr}
+    .btn{padding:12px 24px;font-size:.9rem}
+    .result-buttons{flex-direction:column;align-items:center}
+  }
+</style>
+</head>
+<body>
+
+<div class="stars"></div>
+
+<div class="container">
+  <header>
+    <div class="wings">
+      <!-- Stylized wings / anchor emblem -->
+      <svg viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M100 12 L100 68" stroke="#c5a44e" stroke-width="2.5"/>
+        <circle cx="100" cy="14" r="6" stroke="#c5a44e" stroke-width="2" fill="none"/>
+        <path d="M100 68 L93 58 L100 62 L107 58 Z" fill="#c5a44e"/>
+        <!-- left wing -->
+        <path d="M94 30 Q60 18 8 28 Q30 30 55 36 Q75 40 92 38 Z" fill="#c5a44e" opacity=".85"/>
+        <path d="M94 34 Q65 28 20 34 Q45 35 65 40 Q80 43 92 40 Z" fill="#c5a44e" opacity=".5"/>
+        <!-- right wing -->
+        <path d="M106 30 Q140 18 192 28 Q170 30 145 36 Q125 40 108 38 Z" fill="#c5a44e" opacity=".85"/>
+        <path d="M106 34 Q135 28 180 34 Q155 35 135 40 Q120 43 108 40 Z" fill="#c5a44e" opacity=".5"/>
+        <!-- shield -->
+        <rect x="91" y="28" width="18" height="22" rx="3" stroke="#c5a44e" stroke-width="1.5" fill="rgba(10,22,40,.8)"/>
+        <path d="M95 32 L100 38 L105 32" stroke="#4a90c4" stroke-width="1.5" fill="none"/>
+        <path d="M95 40 L105 40" stroke="#c5a44e" stroke-width="1"/>
+        <path d="M95 44 L105 44" stroke="#c5a44e" stroke-width="1"/>
+      </svg>
+    </div>
+    <h1>Call Sign Generator</h1>
+    <div class="subtitle">Blue Angels Foundation</div>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- ── INTRO ── -->
+  <div id="intro">
+    <p>Every great pilot has a call sign. Answer a few quick questions and we'll assign yours. Ready for clearance?</p>
+    <button class="btn btn-primary" onclick="startQuiz()">Begin Briefing</button>
+  </div>
+
+  <!-- ── QUIZ ── -->
+  <div id="quiz" class="hidden">
+    <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+    <div class="card" id="questionCard"></div>
+  </div>
+
+  <!-- ── RESULT ── -->
+  <div id="result" class="hidden">
+    <div class="result-badge">
+      <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="38" stroke="#c5a44e" stroke-width="1.5" fill="none"/>
+        <polygon points="50,18 54,40 76,40 58,52 64,74 50,60 36,74 42,52 24,40 46,40" fill="#c5a44e" opacity=".8"/>
+      </svg>
+    </div>
+    <div class="result-label">Your Call Sign Is</div>
+    <div class="callsign" id="callsignText"></div>
+    <div class="callsign-meaning" id="callsignMeaning"></div>
+    <div class="result-details" id="resultDetails"></div>
+    <div class="result-buttons">
+      <button class="btn btn-primary" onclick="restart()">New Call Sign</button>
+      <div class="share-wrap">
+        <button class="btn btn-secondary" onclick="toggleShareMenu(event)">Share</button>
+        <div class="share-menu" id="shareMenu">
+          <button class="share-option" onclick="shareToX()">
+            <svg viewBox="0 0 24 24"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Post on X
+          </button>
+          <button class="share-option" onclick="shareToFacebook()">
+            <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+            Share on Facebook
+          </button>
+          <button class="share-option" onclick="shareToText()">
+            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm0 14H5.17L4 17.17V4h16v12z"/><path d="M7 9h10v2H7z"/></svg>
+            Copy Text
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>BLUE ANGELS FOUNDATION &bull; CALL SIGN GENERATOR</footer>
+</div>
+
+<script>
+// ─── Questions ───────────────────────────────────────────────────────
+const questions = [
+  {
+    id:'name',
+    number:'Mission Brief 1 of 7',
+    text:'What\'s your first name, recruit?',
+    type:'text',
+    placeholder:'Enter your first name'
+  },
+  {
+    id:'hometown',
+    number:'Mission Brief 2 of 7',
+    text:'Where\'s home base? Pick the region closest to your hometown.',
+    type:'choice',
+    options:['Northeast','Southeast','Midwest','Southwest','West Coast','Pacific Northwest']
+  },
+  {
+    id:'hobby',
+    number:'Mission Brief 3 of 7',
+    text:'When you\'re not in the cockpit, what\'s your go-to hobby?',
+    type:'choice',
+    options:['Sports','Music','Gaming','Outdoors','Cooking','Reading','Building / Tinkering','Art / Photography']
+  },
+  {
+    id:'trait',
+    number:'Mission Brief 4 of 7',
+    text:'Your wingman would describe you as...',
+    type:'choice',
+    options:['Cool under pressure','Life of the party','The strategist','A daredevil','The loyal one','Quick-witted']
+  },
+  {
+    id:'animal',
+    number:'Mission Brief 5 of 7',
+    text:'Pick a spirit animal for your squadron patch.',
+    type:'choice',
+    options:['Eagle','Wolf','Shark','Falcon','Bear','Panther','Cobra','Phoenix']
+  },
+  {
+    id:'weather',
+    number:'Mission Brief 6 of 7',
+    text:'Ideal flying conditions?',
+    type:'choice',
+    options:['Clear blue skies','Through the storm','Golden sunset','Moonlit night','Above the clouds','Low and fast at dawn']
+  },
+  {
+    id:'motto',
+    number:'Mission Brief 7 of 7',
+    text:'Pick the motto that fires you up.',
+    type:'choice',
+    options:['Fortune favors the bold','Stay low, move fast','No guts, no glory','Smooth is fast','Eyes on the horizon','Born to fly']
+  }
+];
+
+let current = 0;
+const answers = {};
+
+// ─── Navigation ─────────────────────────────────────────────────────
+function startQuiz(){
+  document.getElementById('intro').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  renderQuestion();
+}
+
+function renderQuestion(){
+  const q = questions[current];
+  const pct = ((current) / questions.length) * 100;
+  document.getElementById('progressBar').style.width = pct + '%';
+
+  let html = `<div class="question-number">${q.number}</div>
+              <div class="question-text">${q.text}</div>`;
+
+  if(q.type === 'text'){
+    html += `<input type="text" id="textInput" placeholder="${q.placeholder}" autocomplete="off"
+              onkeydown="if(event.key==='Enter')nextQuestion()">`;
+    if(q.id === 'name'){
+      html += `<select id="pronounSelect">
+                <option value="" disabled ${!answers.pronouns ? 'selected' : ''}>Select your pronouns</option>
+                <option value="He/Him" ${answers.pronouns==='He/Him'?'selected':''}>He / Him</option>
+                <option value="She/Her" ${answers.pronouns==='She/Her'?'selected':''}>She / Her</option>
+                <option value="They/Them" ${answers.pronouns==='They/Them'?'selected':''}>They / Them</option>
+              </select>`;
+    }
+    html += `<div class="btn-row">
+              ${current > 0 ? '<button class="btn btn-secondary" onclick="prevQuestion()">Back</button>' : ''}
+              <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next</button>
+             </div>`;
+  } else {
+    const cols = q.options.length > 6 ? ' three-col' : '';
+    html += `<div class="options${cols}">`;
+    q.options.forEach(opt => {
+      const sel = answers[q.id] === opt ? ' selected' : '';
+      html += `<button class="option-btn${sel}" onclick="selectOption(this,'${q.id}','${opt}')">${opt}</button>`;
+    });
+    html += `</div>`;
+    html += `<div class="btn-row">
+              ${current > 0 ? '<button class="btn btn-secondary" onclick="prevQuestion()">Back</button>' : ''}
+              <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" ${!answers[q.id] ? 'disabled' : ''}>
+                ${current === questions.length - 1 ? 'Generate Call Sign' : 'Next'}
+              </button>
+             </div>`;
+  }
+
+  const card = document.getElementById('questionCard');
+  card.style.animation = 'none';
+  card.offsetHeight; // reflow
+  card.style.animation = 'fadeUp .45s ease';
+  card.innerHTML = html;
+
+  if(q.type === 'text'){
+    const input = document.getElementById('textInput');
+    input.value = answers[q.id] || '';
+    input.focus();
+  }
+}
+
+function selectOption(btn, qid, value){
+  answers[qid] = value;
+  document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function nextQuestion(){
+  const q = questions[current];
+  if(q.type === 'text'){
+    const val = document.getElementById('textInput').value.trim();
+    if(!val) return;
+    answers[q.id] = val;
+    if(q.id === 'name'){
+      const pro = document.getElementById('pronounSelect').value;
+      if(!pro) return;
+      answers.pronouns = pro;
+    }
+  }
+  if(!answers[q.id]) return;
+
+  if(current < questions.length - 1){
+    current++;
+    renderQuestion();
+  } else {
+    generateCallsign();
+  }
+}
+
+function prevQuestion(){
+  if(current > 0){ current--; renderQuestion(); }
+}
+
+// ─── Call Sign Generation ───────────────────────────────────────────
+function generateCallsign(){
+  document.getElementById('quiz').classList.add('hidden');
+  document.getElementById('result').classList.remove('hidden');
+  document.getElementById('progressBar').style.width = '100%';
+
+  const {name, hometown, hobby, trait, animal, weather, motto} = answers;
+
+  // Deterministic seed from answers
+  let seed = 0;
+  const allText = Object.values(answers).join('');
+  for(let i = 0; i < allText.length; i++) seed = ((seed << 5) - seed + allText.charCodeAt(i)) | 0;
+  const pick = (arr) => arr[Math.abs(seed = (seed * 16807 + 7) | 0) % arr.length];
+
+  // Callsign pools organized by trait + animal combos
+  const prefixes = {
+    'Cool under pressure':['Ice','Frost','Steel','Stone','Glacier','Zero','Chill'],
+    'Life of the party':['Flash','Blaze','Neon','Boom','Spark','Ruckus','Riot'],
+    'The strategist':['Shadow','Ghost','Cipher','Sage','Rook','Bishop','Specter'],
+    'A daredevil':['Maverick','Blitz','Rocket','Nitro','Fury','Bolt','Turbo'],
+    'The loyal one':['Shield','Anchor','Bastion','Ironside','Guardian','Fortress','Valor'],
+    'Quick-witted':['Razor','Viper','Fox','Ace','Dart','Reflex','Snap']
+  };
+
+  const animalTags = {
+    'Eagle':['Talon','Soar','Sky','Summit','Raptor'],
+    'Wolf':['Howl','Pack','Fang','Grey','Tracker'],
+    'Shark':['Jaws','Reef','Tide','Depth','Fin'],
+    'Falcon':['Stoop','Swift','Glide','Kestrel','Hawk'],
+    'Bear':['Grizzly','Thunder','Ridge','Kodiak','Claw'],
+    'Panther':['Stealth','Midnight','Prowl','Onyx','Shade'],
+    'Cobra':['Strike','Venom','Hood','Sidewinder','Fang'],
+    'Phoenix':['Ember','Ash','Blaze','Rise','Inferno']
+  };
+
+  const weatherMods = {
+    'Clear blue skies':['Blue','Sky','Horizon','Clear'],
+    'Through the storm':['Storm','Thunder','Lightning','Squall'],
+    'Golden sunset':['Gold','Dusk','Amber','Haze'],
+    'Moonlit night':['Luna','Night','Eclipse','Phantom'],
+    'Above the clouds':['Stratos','Cloud','Apex','Zenith'],
+    'Low and fast at dawn':['Dawn','Rush','Streak','Low']
+  };
+
+  // Build call sign candidates and pick the best combo
+  const prefix = pick(prefixes[trait] || ['Ace']);
+  const animalTag = pick(animalTags[animal] || ['Wing']);
+  const weatherTag = pick(weatherMods[weather] || ['Sky']);
+
+  // Different combination strategies
+  const strategies = [
+    () => prefix,
+    () => animalTag,
+    () => prefix + animalTag.toLowerCase(),
+    () => weatherTag + animalTag.toLowerCase(),
+    () => prefix + '-' + animalTag,
+    () => animalTag + '-' + weatherTag,
+    () => weatherTag,
+  ];
+
+  // Hobby-based bonus tags
+  const hobbyCallsigns = {
+    'Sports':['Clutch','Champ','MVP','Overtime'],
+    'Music':['Tempo','Riff','Cadence','Echo'],
+    'Gaming':['Pixel','Glitch','Combo','Warp'],
+    'Outdoors':['Ridge','Trail','Summit','Timber'],
+    'Cooking':['Sizzle','Smoked','Pepper','Char'],
+    'Reading':['Page','Tome','Scribe','Saga'],
+    'Building / Tinkering':['Wrench','Torque','Rivet','Forge'],
+    'Art / Photography':['Lens','Canvas','Prism','Hue']
+  };
+
+  const hobbyTag = pick(hobbyCallsigns[hobby] || ['Wing']);
+
+  // Motto-based final pool
+  const mottoCallsigns = {
+    'Fortune favors the bold':['Fortuna','Boldstreak','Gambit','Venture'],
+    'Stay low, move fast':['Lowrider','Fastlane','Burner','Skimmer'],
+    'No guts, no glory':['Glory','Guts','Warpath','Bruiser'],
+    'Smooth is fast':['Silk','Smooth','Cruise','Glide'],
+    'Eyes on the horizon':['Horizon','Farsight','Lookout','Beacon'],
+    'Born to fly':['Icarus','Wingborn','Airborn','Pegasus']
+  };
+  const mottoTag = pick(mottoCallsigns[motto] || ['Ace']);
+
+  // Full candidate pool
+  const candidates = [
+    prefix,
+    animalTag,
+    weatherTag,
+    hobbyTag,
+    mottoTag,
+    prefix + ' ' + animalTag,
+    weatherTag + ' ' + prefix,
+    animalTag + ' ' + weatherTag,
+  ];
+
+  // Use seed to pick final callsign
+  const callsign = pick(candidates);
+
+  // ── Pronoun helpers ──
+  const pronouns = answers.pronouns || 'They/Them';
+  const prMap = {
+    'He/Him':  {they:'he',  them:'him', their:'his',  theirs:'his',   were:'was', are:'is',  ve:'s'},
+    'She/Her': {they:'she', them:'her', their:'her',  theirs:'hers',  were:'was', are:'is',  ve:'s'},
+    'They/Them':{they:'they',them:'them',their:'their',theirs:'theirs',were:'were',are:'are',ve:'ve'},
+  };
+  const pr = prMap[pronouns] || prMap['They/Them'];
+  const They = pr.they.charAt(0).toUpperCase() + pr.they.slice(1);
+  const they = pr.they, them = pr.them, their = pr.their;
+  const were = pr.were, are = pr.are;
+
+  // ── Story fragments ──
+  const weatherBits = {
+    'Clear blue skies':'on a perfect bluebird day\u2014not a cloud in sight, which made the whole thing that much harder to explain',
+    'Through the storm':'in the kind of weather that makes seasoned pilots suddenly remember they have paperwork to do',
+    'Golden sunset':'right as the sun was going down, so the whole thing looked like a scene from a movie nobody would believe',
+    'Moonlit night':'in the middle of the night, with nothing but moonlight and questionable judgment',
+    'Above the clouds':'somewhere way above the cloud deck, where apparently the rules are more like suggestions',
+    'Low and fast at dawn':`at dawn, so low that someone on the ground reportedly waved at ${them}`
+  };
+
+  const hobbyColor = {
+    'Sports':`${name}\u2014who once organized a football game on the flight line that got shut down in under four minutes\u2014`,
+    'Music':`${name}\u2014who ${pr.were} already famous on base for humming through the entire pre-flight checklist\u2014`,
+    'Gaming':`${name}\u2014who had a reputation for treating every training exercise like a high-score run\u2014`,
+    'Outdoors':`${name}\u2014who once showed up to a briefing still wearing hiking boots and a carabiner\u2014`,
+    'Cooking':`${name}\u2014already known in the squadron for ${pr.their} strong opinions about the mess hall chili\u2014`,
+    'Reading':`${name}\u2014who could always be found with a book in the ready room between sorties\u2014`,
+    'Building / Tinkering':`${name}\u2014who had already modified ${pr.their} helmet visor with a custom sun shade made from a clipboard\u2014`,
+    'Art / Photography':`${name}\u2014who sketches every jet ${they} fly and has a notebook full of them\u2014`
+  };
+
+  const nameWithColor = pick([hobbyColor[hobby] || `${name}\u2014`, `${name}`]);
+
+  const stories = {
+    'Cool under pressure':[
+      `So there we were, ${weatherBits[weather]||''}. Half the formation is calling it out on comms and ${nameWithColor} keys the mic one time. Just once. "${pick(["I see it.","I got it.","Relax."])}" Then ${they} fixed it. Landed clean. Walked to the debrief like nothing happened. ${They} asked if anyone wanted to grab lunch.`,
+      `During a training run out of the ${hometown} corridor, something went sideways in a way the manual doesn't cover. ${nameWithColor} didn't flinch\u2014just went quiet for about ten seconds, made two corrections, and put it down so smooth the tower thought ${they} ${pr.were} on autopilot. ${They} ${pr.were}n't.`,
+      `Ask anyone in the squadron and they'll tell you the same thing: ${name} doesn't get rattled. The day it happened, ${weatherBits[weather]||''}, and ${name} handled it like ${they} ${pr.were} parallel parking. The CO just shook ${pr.their} head and said, "Alright then."`
+    ],
+    'Life of the party':[
+      `The first week ${name} joined the squadron, ${they} somehow convinced the maintenance crew to let ${them} DJ over the hangar intercom. By Friday, ${they}'d given half the base nicknames. The call sign was less of a decision and more of an inevitability.`,
+      `${nameWithColor} had the whole ready room going after a sortie ${weatherBits[weather]||''}. ${They} told the story so well that even the crew chief\u2014who hadn't been there\u2014started adding details. The name came up mid-story and just... stuck.`,
+      `It was after a long day ${weatherBits[weather]||''}. Most pilots were dead tired. ${name} walked into debrief, cracked one joke, and somehow turned the whole thing into a party. Someone said the name out loud, the room erupted, and that was that.`
+    ],
+    'The strategist':[
+      `${nameWithColor} called the whole play before the sortie even launched. ${They} sketched it on a whiteboard, predicted exactly where things would go sideways\u2014${weatherBits[weather]||''}\u2014and was right on every count. The instructor just stared at the board afterward and said, "Who are you?"`,
+      `Three days before the exercise, ${name} told ${pr.their} wingman exactly how it would go down. ${They} ${pr.were} off by about twelve seconds. The squadron stopped questioning ${pr.their} hunches after that.`,
+      `Every squadron has the pilot who reads the brief once and somehow remembers everything. ${name} is that pilot. ${They} earned the name after a training hop where ${they} calmly narrated what the opposing team was about to do\u2014while it was happening.`
+    ],
+    'A daredevil':[
+      `Nobody told ${name} to do it. In fact, at least two people specifically told ${them} not to. ${weatherBits[weather]||''}, ${nameWithColor} decided to find out what would happen. What happened was it worked, the tower went silent, and ${name} landed to a round of applause ${they} probably shouldn't have received.`,
+      `The CO's exact words were, "That was unauthorized, unsafe, and\u2014off the record\u2014the best flying I've seen this year." ${nameWithColor} just grinned. ${They}'d been waiting for that sortie all week.`,
+      `${name} has a habit of asking "${pick(["What's the worst that could happen?","Is that a rule or a guideline?","Has anyone actually tried this?"])}" and then doing the thing before anyone can answer. The name came from one of those moments, ${weatherBits[weather]||''}.`
+    ],
+    'The loyal one':[
+      `${nameWithColor} turned the whole formation around because ${pr.their} wingman's radio cut out ${weatherBits[weather]||''}. Didn't hesitate. Flew wing-to-wing and guided them home. When the CO asked why ${they} broke formation, ${name} just said, "That's my wingman."`,
+      `During a training exercise, ${name} gave up ${pr.their} shot at top marks to cover a rookie who was falling behind. Didn't say a word about it afterward. The rookie told everyone though. That's how the name got around.`,
+      `The squadron knows: if you're flying with ${name}, you're coming home. ${They} earned the name after a rough sortie ${weatherBits[weather]||''} where ${they} refused to leave the area until every jet in the flight was accounted for.`
+    ],
+    'Quick-witted':[
+      `${nameWithColor} got the name after a radio exchange that's now quoted on base like scripture. Tower called out a correction, ${name} came back with something so fast and so perfect that the whole frequency went dead for three seconds\u2014then the laughter started. Even the CO keyed the mic to say "Good copy."`,
+      `During a hop ${weatherBits[weather]||''}, something went weird with the avionics. ${name} didn't have time to look it up. ${They} just did the math in ${pr.their} head, called the correction to tower, and nailed it. The maintenance chief still doesn't quite believe the story.`,
+      `Ask ${name} a question and you'll get an answer before you finish the sentence. ${They} earned the call sign the day ${they} talked ${pr.their} way out of a busted approach ${weatherBits[weather]||''} using nothing but mental math and a one-liner that made the controller laugh mid-clearance.`
+    ]
+  };
+
+  const traitStories = stories[trait] || stories['Cool under pressure'];
+  const meaning = pick(traitStories);
+
+  const closers = [
+    `The name was on the duty board by end of day.`,
+    `The squadron voted. It was unanimous.`,
+    `Nobody asked if ${they} liked it. It was already done.`,
+    `The crew chief had it stenciled on the jet by the next morning.`,
+    `Command tried to assign a different one. It didn't take.`,
+    `Word got around fast. Even pilots from other squadrons started using it.`
+  ];
+
+  const fullMeaning = meaning + ' ' + pick(closers);
+
+  // Render
+  document.getElementById('callsignText').textContent = callsign;
+  document.getElementById('callsignMeaning').textContent = `"${fullMeaning}"`;
+
+  document.getElementById('resultDetails').innerHTML = `
+    <h3>Pilot Dossier</h3>
+    <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${name}</span></div>
+    <div class="detail-row"><span class="detail-label">Region</span><span class="detail-value">${hometown}</span></div>
+    <div class="detail-row"><span class="detail-label">Off-Duty</span><span class="detail-value">${hobby}</span></div>
+    <div class="detail-row"><span class="detail-label">Personality</span><span class="detail-value">${trait}</span></div>
+    <div class="detail-row"><span class="detail-label">Spirit Animal</span><span class="detail-value">${animal}</span></div>
+    <div class="detail-row"><span class="detail-label">Preferred Skies</span><span class="detail-value">${weather}</span></div>
+    <div class="detail-row"><span class="detail-label">Motto</span><span class="detail-value">${motto}</span></div>
+  `;
+}
+
+function restart(){
+  Object.keys(answers).forEach(k => delete answers[k]);
+  current = 0;
+  document.getElementById('result').classList.add('hidden');
+  document.getElementById('quiz').classList.remove('hidden');
+  renderQuestion();
+}
+
+function getShareText(){
+  const cs = document.getElementById('callsignText').textContent;
+  return `My Blue Angels call sign is "${cs}"! Get yours at the Blue Angels Foundation show.`;
+}
+
+function toggleShareMenu(e){
+  e.stopPropagation();
+  document.getElementById('shareMenu').classList.toggle('open');
+}
+
+// Close share menu when clicking outside
+document.addEventListener('click', () => {
+  document.getElementById('shareMenu')?.classList.remove('open');
+});
+
+function shareToX(){
+  const text = encodeURIComponent(getShareText());
+  window.open(`https://x.com/intent/tweet?text=${text}`, '_blank', 'width=550,height=420');
+  document.getElementById('shareMenu').classList.remove('open');
+}
+
+function shareToFacebook(){
+  const text = encodeURIComponent(getShareText());
+  window.open(`https://www.facebook.com/sharer/sharer.php?quote=${text}`, '_blank', 'width=550,height=420');
+  document.getElementById('shareMenu').classList.remove('open');
+}
+
+async function shareToText(){
+  const text = getShareText();
+  try{
+    await navigator.clipboard.writeText(text);
+    const btn = document.querySelector('.share-option:last-child');
+    const orig = btn.innerHTML;
+    btn.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" fill="currentColor"/></svg> Copied!';
+    setTimeout(() => btn.innerHTML = orig, 2000);
+  }catch(e){
+    prompt('Copy your call sign:', text);
+  }
+  document.getElementById('shareMenu').classList.remove('open');
+}
+</script>
+</body>
+</html>

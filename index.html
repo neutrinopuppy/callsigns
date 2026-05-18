@@ -279,6 +279,23 @@
     color:rgba(240,240,240,.3);text-transform:none;
   }
 
+  /* ── admin export bar (only shown with #admin) ── */
+  #adminBar{
+    position:fixed;left:0;right:0;bottom:0;z-index:50;
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+    padding:10px 18px;
+    background:var(--navy-mid);
+    border-top:1px solid rgba(197,164,78,.35);
+    font-size:.85rem;color:var(--white);
+  }
+  #adminBar button{
+    font-family:'Roboto',sans-serif;font-size:.8rem;
+    padding:6px 14px;border-radius:6px;cursor:pointer;
+    background:rgba(197,164,78,.18);
+    border:1px solid var(--gold);color:var(--gold-light);
+  }
+  #adminBar button:hover{background:rgba(197,164,78,.3)}
+
   /* ── responsive ── */
   @media(max-width:520px){
     .card{padding:28px 20px}
@@ -353,6 +370,13 @@
     BLUE ANGELS FOUNDATION &bull; CALL SIGN GENERATOR
     <p class="disclaimer">The Blue Angels Foundation is a 501(c)(3) charitable nonprofit corporation consisting of former members of the United States Navy Flight Demonstration Squadron, &ldquo;The Blue Angels,&rdquo; and is not part of the United States Navy. No endorsement, express or implied, of the BAF or its activities is made by the Department of Defense, the Department of the Navy, or the Navy Flight Demonstration Squadron</p>
   </footer>
+
+  <!-- Hidden admin bar: open the page with #admin to download collected entries -->
+  <div id="adminBar" class="hidden">
+    <span><strong id="entryCount">0</strong> entries stored on this device</span>
+    <button onclick="exportEntriesCSV()">Download entries.csv</button>
+    <button onclick="clearEntries()">Clear</button>
+  </div>
 </div>
 
 <script>
@@ -422,9 +446,12 @@ const answers = {};
 // ─── Spreadsheet logging ────────────────────────────────────────────
 // Paste the Web App URL from your deployed Google Apps Script below.
 // (See the Apps Script setup notes provided with this file.)
-const SHEET_ENDPOINT = 'PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbwZaruxluP6s7FfJSmS5XRGfaGRVxp2MjWpqbxUhgLaypS_nYp-hJOt19bhx6z4Vx9qNQ/exec';
 
 function logToSheet(data){
+  // Always keep a local backup so no entry is lost before the Sheet is set up
+  storeEntry(data);
+  // Also POST to the spreadsheet once an endpoint is configured
   if(!SHEET_ENDPOINT || SHEET_ENDPOINT.indexOf('PASTE_') === 0) return;
   fetch(SHEET_ENDPOINT, {
     method:'POST',
@@ -433,6 +460,60 @@ function logToSheet(data){
     body:JSON.stringify(data)
   }).catch(() => {});
 }
+
+// ─── Local entry storage + CSV export ───────────────────────────────
+// Fallback collection before the Google Sheet is wired up. Entries are
+// kept in this browser's localStorage; visit the page with #admin in the
+// URL to download them as entries.csv (a .gitignored file — it holds
+// email addresses, so it must never be committed).
+const ENTRY_KEY = 'bafCallsignEntries';
+const CSV_FIELDS = ['timestamp','name','email','hometown','hobby','trait','animal','weather','motto','callsign'];
+const CSV_HEADER = ['Timestamp','Name','Email','Hometown','Hobby','Trait','Animal','Weather','Motto','Call Sign'];
+
+function storeEntry(data){
+  try{
+    const list = JSON.parse(localStorage.getItem(ENTRY_KEY) || '[]');
+    list.push(data);
+    localStorage.setItem(ENTRY_KEY, JSON.stringify(list));
+  }catch(e){}
+}
+
+function getEntries(){
+  try{ return JSON.parse(localStorage.getItem(ENTRY_KEY) || '[]'); }
+  catch(e){ return []; }
+}
+
+function exportEntriesCSV(){
+  const esc = (v) => '"' + String(v == null ? '' : v).replace(/"/g, '""') + '"';
+  const lines = [CSV_HEADER.join(',')];
+  getEntries().forEach(e => lines.push(CSV_FIELDS.map(f => esc(e[f])).join(',')));
+  const blob = new Blob([lines.join('\r\n') + '\r\n'], {type:'text/csv;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'entries.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function clearEntries(){
+  if(confirm('Delete all entries stored on this device? Download the CSV first if you still need them.')){
+    localStorage.removeItem(ENTRY_KEY);
+    refreshAdminBar();
+  }
+}
+
+function refreshAdminBar(){
+  const bar = document.getElementById('adminBar');
+  if(!bar) return;
+  if(location.hash === '#admin'){
+    document.getElementById('entryCount').textContent = getEntries().length;
+    bar.classList.remove('hidden');
+  } else {
+    bar.classList.add('hidden');
+  }
+}
+window.addEventListener('hashchange', refreshAdminBar);
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -759,7 +840,8 @@ function generateCallsign(){
     animal: animal,
     weather: weather,
     motto: motto,
-    callsign: callsign
+    callsign: callsign,
+    story: fullMeaning
   });
 }
 
@@ -811,6 +893,9 @@ async function shareToText(){
   }
   document.getElementById('shareMenu').classList.remove('open');
 }
+
+// Show the admin export bar if the page is opened with #admin
+refreshAdminBar();
 </script>
 </body>
 </html>

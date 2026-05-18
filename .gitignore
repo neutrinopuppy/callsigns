@@ -1,0 +1,6 @@
+# Collected sign-up entries — contains email addresses (PII). Keep this local;
+# never commit it. Download fresh copies from the page via the #admin bar.
+entries.csv
+
+# macOS
+.DS_Store

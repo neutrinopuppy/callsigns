@@ -58,6 +58,7 @@
     display:inline-block;position:relative;margin-bottom:8px;
   }
   .wings svg{width:160px;height:auto}
+  .wings img{width:240px;height:auto;max-width:80%}
 
   h1{
     font-family:'Oswald',sans-serif;
@@ -102,7 +103,7 @@
     to{opacity:1;transform:translateY(0)}
   }
 
-  .card.hidden{display:none}
+  .hidden{display:none!important}
 
   .question-number{
     font-family:'Oswald',sans-serif;
@@ -129,25 +130,6 @@
     border-color:var(--gold);
     box-shadow:0 0 0 3px rgba(197,164,78,.15);
   }
-
-  /* ── select (pronouns) ── */
-  select{
-    width:100%;padding:14px 18px;font-size:1.05rem;
-    background:rgba(255,255,255,.06);
-    border:1px solid rgba(197,164,78,.3);
-    border-radius:10px;color:var(--white);
-    font-family:'Roboto',sans-serif;
-    transition:border-color .3s,box-shadow .3s;
-    outline:none;margin-top:12px;cursor:pointer;
-    appearance:none;-webkit-appearance:none;
-    background-image:url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1.5L6 6.5L11 1.5' stroke='%23c5a44e' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-    background-repeat:no-repeat;background-position:right 16px center;
-  }
-  select:focus{
-    border-color:var(--gold);
-    box-shadow:0 0 0 3px rgba(197,164,78,.15);
-  }
-  select option{background:var(--navy-mid);color:var(--white)}
 
   /* ── option grid (for multiple choice) ── */
   .options{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -215,7 +197,6 @@
 
   /* ── result screen ── */
   #result{text-align:center;flex:1;display:flex;flex-direction:column;justify-content:center;padding:20px 0}
-  #result.hidden{display:none}
 
   .result-badge{
     margin:0 auto 16px;
@@ -253,27 +234,12 @@
     font-style:italic;
   }
 
-  .result-details{
-    background:rgba(255,255,255,.04);
-    border:1px solid rgba(197,164,78,.15);
-    border-radius:12px;padding:20px 24px;
-    max-width:400px;margin:0 auto 28px;text-align:left;
-  }
-  .result-details h3{
-    font-family:'Oswald',sans-serif;
-    font-size:.85rem;letter-spacing:3px;text-transform:uppercase;
-    color:var(--gold);margin-bottom:12px;
-  }
-  .detail-row{
-    display:flex;justify-content:space-between;align-items:baseline;gap:16px;
-    padding:8px 0;border-bottom:1px solid rgba(255,255,255,.06);
-    font-size:.9rem;
-  }
-  .detail-row:last-child{border-bottom:none}
-  .detail-label{color:rgba(240,240,240,.5);white-space:nowrap;flex-shrink:0}
-  .detail-value{color:var(--white);font-weight:500;text-align:right;word-break:break-word}
+  .result-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:8px}
 
-  .result-buttons{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  /* ── inline validation error ── */
+  .input-error{
+    color:var(--red);font-size:.85rem;margin-top:8px;min-height:1.1em;
+  }
 
   /* ── share menu ── */
   .share-wrap{position:relative;display:inline-block}
@@ -307,6 +273,11 @@
     font-size:.75rem;letter-spacing:1px;
     color:rgba(240,240,240,.25);
   }
+  .disclaimer{
+    max-width:620px;margin:14px auto 0;
+    font-size:.62rem;line-height:1.5;letter-spacing:.3px;
+    color:rgba(240,240,240,.3);text-transform:none;
+  }
 
   /* ── responsive ── */
   @media(max-width:520px){
@@ -325,23 +296,7 @@
 <div class="container">
   <header>
     <div class="wings">
-      <!-- Stylized wings / anchor emblem -->
-      <svg viewBox="0 0 200 80" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M100 12 L100 68" stroke="#c5a44e" stroke-width="2.5"/>
-        <circle cx="100" cy="14" r="6" stroke="#c5a44e" stroke-width="2" fill="none"/>
-        <path d="M100 68 L93 58 L100 62 L107 58 Z" fill="#c5a44e"/>
-        <!-- left wing -->
-        <path d="M94 30 Q60 18 8 28 Q30 30 55 36 Q75 40 92 38 Z" fill="#c5a44e" opacity=".85"/>
-        <path d="M94 34 Q65 28 20 34 Q45 35 65 40 Q80 43 92 40 Z" fill="#c5a44e" opacity=".5"/>
-        <!-- right wing -->
-        <path d="M106 30 Q140 18 192 28 Q170 30 145 36 Q125 40 108 38 Z" fill="#c5a44e" opacity=".85"/>
-        <path d="M106 34 Q135 28 180 34 Q155 35 135 40 Q120 43 108 40 Z" fill="#c5a44e" opacity=".5"/>
-        <!-- shield -->
-        <rect x="91" y="28" width="18" height="22" rx="3" stroke="#c5a44e" stroke-width="1.5" fill="rgba(10,22,40,.8)"/>
-        <path d="M95 32 L100 38 L105 32" stroke="#4a90c4" stroke-width="1.5" fill="none"/>
-        <path d="M95 40 L105 40" stroke="#c5a44e" stroke-width="1"/>
-        <path d="M95 44 L105 44" stroke="#c5a44e" stroke-width="1"/>
-      </svg>
+      <img src="Blue-Angels-Foundation-UPDATED.png" alt="Blue Angels Foundation">
     </div>
     <h1>Call Sign Generator</h1>
     <div class="subtitle">Blue Angels Foundation</div>
@@ -372,7 +327,6 @@
     <div class="result-label">Your Call Sign Is</div>
     <div class="callsign" id="callsignText"></div>
     <div class="callsign-meaning" id="callsignMeaning"></div>
-    <div class="result-details" id="resultDetails"></div>
     <div class="result-buttons">
       <button class="btn btn-primary" onclick="restart()">New Call Sign</button>
       <div class="share-wrap">
@@ -395,7 +349,10 @@
     </div>
   </div>
 
-  <footer>BLUE ANGELS FOUNDATION &bull; CALL SIGN GENERATOR</footer>
+  <footer>
+    BLUE ANGELS FOUNDATION &bull; CALL SIGN GENERATOR
+    <p class="disclaimer">The Blue Angels Foundation is a 501(c)(3) charitable nonprofit corporation consisting of former members of the United States Navy Flight Demonstration Squadron, &ldquo;The Blue Angels,&rdquo; and is not part of the United States Navy. No endorsement, express or implied, of the BAF or its activities is made by the Department of Defense, the Department of the Navy, or the Navy Flight Demonstration Squadron</p>
+  </footer>
 </div>
 
 <script>
@@ -403,57 +360,81 @@
 const questions = [
   {
     id:'name',
-    number:'Mission Brief 1 of 7',
+    number:'Mission Brief 1 of 8',
     text:'What\'s your first name, recruit?',
     type:'text',
     placeholder:'Enter your first name'
   },
   {
     id:'hometown',
-    number:'Mission Brief 2 of 7',
-    text:'Where\'s home base? Pick the region closest to your hometown.',
-    type:'choice',
-    options:['Northeast','Southeast','Midwest','Southwest','West Coast','Pacific Northwest']
+    number:'Mission Brief 2 of 8',
+    text:'Where\'s home base? Tell us your hometown.',
+    type:'text',
+    placeholder:'e.g. Pensacola, FL'
   },
   {
     id:'hobby',
-    number:'Mission Brief 3 of 7',
+    number:'Mission Brief 3 of 8',
     text:'When you\'re not in the cockpit, what\'s your go-to hobby?',
     type:'choice',
     options:['Sports','Music','Gaming','Outdoors','Cooking','Reading','Building / Tinkering','Art / Photography']
   },
   {
     id:'trait',
-    number:'Mission Brief 4 of 7',
+    number:'Mission Brief 4 of 8',
     text:'Your wingman would describe you as...',
     type:'choice',
     options:['Cool under pressure','Life of the party','The strategist','A daredevil','The loyal one','Quick-witted']
   },
   {
     id:'animal',
-    number:'Mission Brief 5 of 7',
+    number:'Mission Brief 5 of 8',
     text:'Pick a spirit animal for your squadron patch.',
     type:'choice',
     options:['Eagle','Wolf','Shark','Falcon','Bear','Panther','Cobra','Phoenix']
   },
   {
     id:'weather',
-    number:'Mission Brief 6 of 7',
+    number:'Mission Brief 6 of 8',
     text:'Ideal flying conditions?',
     type:'choice',
     options:['Clear blue skies','Through the storm','Golden sunset','Moonlit night','Above the clouds','Low and fast at dawn']
   },
   {
     id:'motto',
-    number:'Mission Brief 7 of 7',
+    number:'Mission Brief 7 of 8',
     text:'Pick the motto that fires you up.',
     type:'choice',
     options:['Fortune favors the bold','Stay low, move fast','No guts, no glory','Smooth is fast','Eyes on the horizon','Born to fly']
+  },
+  {
+    id:'email',
+    number:'Mission Brief 8 of 8',
+    text:'Where do we send your clearance? Drop your email.',
+    type:'text',
+    placeholder:'you@example.com'
   }
 ];
 
 let current = 0;
 const answers = {};
+
+// ─── Spreadsheet logging ────────────────────────────────────────────
+// Paste the Web App URL from your deployed Google Apps Script below.
+// (See the Apps Script setup notes provided with this file.)
+const SHEET_ENDPOINT = 'PASTE_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
+
+function logToSheet(data){
+  if(!SHEET_ENDPOINT || SHEET_ENDPOINT.indexOf('PASTE_') === 0) return;
+  fetch(SHEET_ENDPOINT, {
+    method:'POST',
+    mode:'no-cors',
+    headers:{'Content-Type':'text/plain;charset=utf-8'},
+    body:JSON.stringify(data)
+  }).catch(() => {});
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 // ─── Navigation ─────────────────────────────────────────────────────
 function startQuiz(){
@@ -473,17 +454,12 @@ function renderQuestion(){
   if(q.type === 'text'){
     html += `<input type="text" id="textInput" placeholder="${q.placeholder}" autocomplete="off"
               onkeydown="if(event.key==='Enter')nextQuestion()">`;
-    if(q.id === 'name'){
-      html += `<select id="pronounSelect">
-                <option value="" disabled ${!answers.pronouns ? 'selected' : ''}>Select your pronouns</option>
-                <option value="He/Him" ${answers.pronouns==='He/Him'?'selected':''}>He / Him</option>
-                <option value="She/Her" ${answers.pronouns==='She/Her'?'selected':''}>She / Her</option>
-                <option value="They/Them" ${answers.pronouns==='They/Them'?'selected':''}>They / Them</option>
-              </select>`;
-    }
+    html += `<div class="input-error" id="inputError"></div>`;
     html += `<div class="btn-row">
               ${current > 0 ? '<button class="btn btn-secondary" onclick="prevQuestion()">Back</button>' : ''}
-              <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next</button>
+              <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">
+                ${current === questions.length - 1 ? 'Generate Call Sign' : 'Next'}
+              </button>
              </div>`;
   } else {
     const cols = q.options.length > 6 ? ' three-col' : '';
@@ -525,13 +501,17 @@ function nextQuestion(){
   const q = questions[current];
   if(q.type === 'text'){
     const val = document.getElementById('textInput').value.trim();
-    if(!val) return;
-    answers[q.id] = val;
-    if(q.id === 'name'){
-      const pro = document.getElementById('pronounSelect').value;
-      if(!pro) return;
-      answers.pronouns = pro;
+    const err = document.getElementById('inputError');
+    if(err) err.textContent = '';
+    if(!val){
+      if(err) err.textContent = 'This field is required.';
+      return;
     }
+    if(q.id === 'email' && !EMAIL_RE.test(val)){
+      if(err) err.textContent = 'Please enter a valid email address.';
+      return;
+    }
+    answers[q.id] = val;
   }
   if(!answers[q.id]) return;
 
@@ -554,6 +534,7 @@ function generateCallsign(){
   document.getElementById('progressBar').style.width = '100%';
 
   const {name, hometown, hobby, trait, animal, weather, motto} = answers;
+  const homeCity = (hometown || '').split(',')[0].trim() || 'back home';
 
   // Deterministic seed from answers
   let seed = 0;
@@ -561,9 +542,9 @@ function generateCallsign(){
   for(let i = 0; i < allText.length; i++) seed = ((seed << 5) - seed + allText.charCodeAt(i)) | 0;
   const pick = (arr) => arr[Math.abs(seed = (seed * 16807 + 7) | 0) % arr.length];
 
-  // Callsign pools organized by trait + animal combos
+  // Callsign pools, keyed by personality trait
   const prefixes = {
-    'Cool under pressure':['Ice','Frost','Steel','Stone','Glacier','Zero','Chill'],
+    'Cool under pressure':['Ice','Frost','Steel','Stone','Glacier','Zero','Subzero'],
     'Life of the party':['Flash','Blaze','Neon','Boom','Spark','Ruckus','Riot'],
     'The strategist':['Shadow','Ghost','Cipher','Sage','Rook','Bishop','Specter'],
     'A daredevil':['Maverick','Blitz','Rocket','Nitro','Fury','Bolt','Turbo'],
@@ -571,81 +552,18 @@ function generateCallsign(){
     'Quick-witted':['Razor','Viper','Fox','Ace','Dart','Reflex','Snap']
   };
 
-  const animalTags = {
-    'Eagle':['Talon','Soar','Sky','Summit','Raptor'],
-    'Wolf':['Howl','Pack','Fang','Grey','Tracker'],
-    'Shark':['Jaws','Reef','Tide','Depth','Fin'],
-    'Falcon':['Stoop','Swift','Glide','Kestrel','Hawk'],
-    'Bear':['Grizzly','Thunder','Ridge','Kodiak','Claw'],
-    'Panther':['Stealth','Midnight','Prowl','Onyx','Shade'],
-    'Cobra':['Strike','Venom','Hood','Sidewinder','Fang'],
-    'Phoenix':['Ember','Ash','Blaze','Rise','Inferno']
-  };
-
   const weatherMods = {
-    'Clear blue skies':['Blue','Sky','Horizon','Clear'],
-    'Through the storm':['Storm','Thunder','Lightning','Squall'],
-    'Golden sunset':['Gold','Dusk','Amber','Haze'],
-    'Moonlit night':['Luna','Night','Eclipse','Phantom'],
-    'Above the clouds':['Stratos','Cloud','Apex','Zenith'],
-    'Low and fast at dawn':['Dawn','Rush','Streak','Low']
+    'Clear blue skies':['Horizon','Cobalt','Skyhawk','Halo'],
+    'Through the storm':['Storm','Thunder','Tempest','Squall'],
+    'Golden sunset':['Dusk','Amber','Ember','Sundown'],
+    'Moonlit night':['Eclipse','Phantom','Midnight','Luna'],
+    'Above the clouds':['Zenith','Apex','Stratos','Summit'],
+    'Low and fast at dawn':['Streak','Daybreak','Afterburner','Blur']
   };
 
-  // Build call sign candidates and pick the best combo
+  // Callsign building blocks (final selection happens after the story is picked)
   const prefix = pick(prefixes[trait] || ['Ace']);
-  const animalTag = pick(animalTags[animal] || ['Wing']);
   const weatherTag = pick(weatherMods[weather] || ['Sky']);
-
-  // Different combination strategies
-  const strategies = [
-    () => prefix,
-    () => animalTag,
-    () => prefix + animalTag.toLowerCase(),
-    () => weatherTag + animalTag.toLowerCase(),
-    () => prefix + '-' + animalTag,
-    () => animalTag + '-' + weatherTag,
-    () => weatherTag,
-  ];
-
-  // Hobby-based bonus tags
-  const hobbyCallsigns = {
-    'Sports':['Clutch','Champ','MVP','Overtime'],
-    'Music':['Tempo','Riff','Cadence','Echo'],
-    'Gaming':['Pixel','Glitch','Combo','Warp'],
-    'Outdoors':['Ridge','Trail','Summit','Timber'],
-    'Cooking':['Sizzle','Smoked','Pepper','Char'],
-    'Reading':['Page','Tome','Scribe','Saga'],
-    'Building / Tinkering':['Wrench','Torque','Rivet','Forge'],
-    'Art / Photography':['Lens','Canvas','Prism','Hue']
-  };
-
-  const hobbyTag = pick(hobbyCallsigns[hobby] || ['Wing']);
-
-  // Motto-based final pool
-  const mottoCallsigns = {
-    'Fortune favors the bold':['Fortuna','Boldstreak','Gambit','Venture'],
-    'Stay low, move fast':['Lowrider','Fastlane','Burner','Skimmer'],
-    'No guts, no glory':['Glory','Guts','Warpath','Bruiser'],
-    'Smooth is fast':['Silk','Smooth','Cruise','Glide'],
-    'Eyes on the horizon':['Horizon','Farsight','Lookout','Beacon'],
-    'Born to fly':['Icarus','Wingborn','Airborn','Pegasus']
-  };
-  const mottoTag = pick(mottoCallsigns[motto] || ['Ace']);
-
-  // Full candidate pool
-  const candidates = [
-    prefix,
-    animalTag,
-    weatherTag,
-    hobbyTag,
-    mottoTag,
-    prefix + ' ' + animalTag,
-    weatherTag + ' ' + prefix,
-    animalTag + ' ' + weatherTag,
-  ];
-
-  // Use seed to pick final callsign
-  const callsign = pick(candidates);
 
   // ── Pronoun helpers ──
   const pronouns = answers.pronouns || 'They/Them';
@@ -661,7 +579,7 @@ function generateCallsign(){
 
   // ── Story fragments ──
   const weatherBits = {
-    'Clear blue skies':'on a perfect bluebird day\u2014not a cloud in sight, which made the whole thing that much harder to explain',
+    'Clear blue skies':'on a perfect bluebird day, not a cloud in sight, which made the whole thing that much harder to explain',
     'Through the storm':'in the kind of weather that makes seasoned pilots suddenly remember they have paperwork to do',
     'Golden sunset':'right as the sun was going down, so the whole thing looked like a scene from a movie nobody would believe',
     'Moonlit night':'in the middle of the night, with nothing but moonlight and questionable judgment',
@@ -669,80 +587,180 @@ function generateCallsign(){
     'Low and fast at dawn':`at dawn, so low that someone on the ground reportedly waved at ${them}`
   };
 
-  const hobbyColor = {
-    'Sports':`${name}\u2014who once organized a football game on the flight line that got shut down in under four minutes\u2014`,
-    'Music':`${name}\u2014who ${pr.were} already famous on base for humming through the entire pre-flight checklist\u2014`,
-    'Gaming':`${name}\u2014who had a reputation for treating every training exercise like a high-score run\u2014`,
-    'Outdoors':`${name}\u2014who once showed up to a briefing still wearing hiking boots and a carabiner\u2014`,
-    'Cooking':`${name}\u2014already known in the squadron for ${pr.their} strong opinions about the mess hall chili\u2014`,
-    'Reading':`${name}\u2014who could always be found with a book in the ready room between sorties\u2014`,
-    'Building / Tinkering':`${name}\u2014who had already modified ${pr.their} helmet visor with a custom sun shade made from a clipboard\u2014`,
-    'Art / Photography':`${name}\u2014who sketches every jet ${they} fly and has a notebook full of them\u2014`
+  // Off-duty detail, woven into the story as an appositive on the pilot's name
+  const hobbyClause = {
+    'Sports':'who once organized a football game on the flight line that got shut down in under four minutes',
+    'Music':'who was already famous on base for humming through the entire pre-flight checklist',
+    'Gaming':'who had a reputation for treating every training exercise like a high-score run',
+    'Outdoors':'who once showed up to a briefing still wearing hiking boots and a carabiner',
+    'Cooking':'who once bribed a reluctant CO into signing off on a sortie with a tin of homemade cookies',
+    'Reading':'who could always be found with a book in the ready room between sorties',
+    'Building / Tinkering':`who had already modified ${pr.their} helmet visor with a custom sun shade made from a clipboard`,
+    'Art / Photography':'who sketches every jet on the flight line and keeps a notebook full of them'
   };
-
-  const nameWithColor = pick([hobbyColor[hobby] || `${name}\u2014`, `${name}`]);
+  const nameWithHobby = `${name}, ${hobbyClause[hobby] || 'who flies'},`;
 
   const stories = {
-    'Cool under pressure':[
-      `So there we were, ${weatherBits[weather]||''}. Half the formation is calling it out on comms and ${nameWithColor} keys the mic one time. Just once. "${pick(["I see it.","I got it.","Relax."])}" Then ${they} fixed it. Landed clean. Walked to the debrief like nothing happened. ${They} asked if anyone wanted to grab lunch.`,
-      `During a training run out of the ${hometown} corridor, something went sideways in a way the manual doesn't cover. ${nameWithColor} didn't flinch\u2014just went quiet for about ten seconds, made two corrections, and put it down so smooth the tower thought ${they} ${pr.were} on autopilot. ${They} ${pr.were}n't.`,
-      `Ask anyone in the squadron and they'll tell you the same thing: ${name} doesn't get rattled. The day it happened, ${weatherBits[weather]||''}, and ${name} handled it like ${they} ${pr.were} parallel parking. The CO just shook ${pr.their} head and said, "Alright then."`
+    instinct:[
+      `${nameWithHobby} keyed the mic exactly once while half the formation was still calling it out on comms. "${pick(["I see it.","I got it.","Relax."])}" It all happened ${weatherBits[weather]||''}. ${They} fixed it, landed clean, and walked into debrief like nothing had happened, then asked if anyone wanted to grab lunch.`,
+      `Something went sideways out of the ${homeCity} corridor in a way the manual doesn't cover. The sortie was running ${weatherBits[weather]||''}. ${nameWithHobby} didn't flinch. ${They} went quiet for about ten seconds, made two corrections, and put it down so smooth the tower thought ${they} ${pr.were} on autopilot. ${They} ${pr.were}n't.`,
+      `Ask anyone in the squadron and they'll tell you the same thing: ${nameWithHobby} doesn't get rattled. The day a training sortie went sideways, it was ${weatherBits[weather]||''}. ${name} handled the whole thing like ${they} ${pr.were} parallel parking. The CO just shook ${pr.their} head and said, "Alright then."`
     ],
-    'Life of the party':[
-      `The first week ${name} joined the squadron, ${they} somehow convinced the maintenance crew to let ${them} DJ over the hangar intercom. By Friday, ${they}'d given half the base nicknames. The call sign was less of a decision and more of an inevitability.`,
-      `${nameWithColor} had the whole ready room going after a sortie ${weatherBits[weather]||''}. ${They} told the story so well that even the crew chief\u2014who hadn't been there\u2014started adding details. The name came up mid-story and just... stuck.`,
-      `It was after a long day ${weatherBits[weather]||''}. Most pilots were dead tired. ${name} walked into debrief, cracked one joke, and somehow turned the whole thing into a party. Someone said the name out loud, the room erupted, and that was that.`
+    spark:[
+      `The first week ${nameWithHobby} joined the squadron, ${they} talked the maintenance crew into letting ${them} DJ over the hangar intercom. By Friday ${they}'d given half the base nicknames. The callsign was less of a decision than an inevitability; it stuck after one sortie that ran ${weatherBits[weather]||''}.`,
+      `${nameWithHobby} had the whole ready room going after a sortie. The flight itself had run ${weatherBits[weather]||''}. ${They} told the story so well that even the crew chief, who hadn't been there, started adding details. The callsign came up mid-story and just... stuck.`,
+      `It had been a long day, and the last sortie left most pilots dead tired. The flying that day had been ${weatherBits[weather]||''}. ${nameWithHobby} still turned debrief into a party with a single joke. Someone said the callsign out loud, the room erupted, and that was that.`
     ],
-    'The strategist':[
-      `${nameWithColor} called the whole play before the sortie even launched. ${They} sketched it on a whiteboard, predicted exactly where things would go sideways\u2014${weatherBits[weather]||''}\u2014and was right on every count. The instructor just stared at the board afterward and said, "Who are you?"`,
-      `Three days before the exercise, ${name} told ${pr.their} wingman exactly how it would go down. ${They} ${pr.were} off by about twelve seconds. The squadron stopped questioning ${pr.their} hunches after that.`,
-      `Every squadron has the pilot who reads the brief once and somehow remembers everything. ${name} is that pilot. ${They} earned the name after a training hop where ${they} calmly narrated what the opposing team was about to do\u2014while it was happening.`
+    mind:[
+      `${nameWithHobby} called the whole play before the sortie even launched. ${They} sketched it on a whiteboard and predicted exactly where things would go sideways. The flight itself ran ${weatherBits[weather]||''}. ${They} ${pr.were} right on every count, and the instructor just stared at the board and said, "Who are you?"`,
+      `Three days before the exercise, ${nameWithHobby} told ${pr.their} wingman exactly how it would go down. The sortie itself ran ${weatherBits[weather]||''}. ${They} ${pr.were} off by twelve seconds, no more, and the squadron stopped questioning ${pr.their} hunches.`,
+      `Every squadron has the pilot who reads the brief once and remembers all of it. ${nameWithHobby} is that one. The sortie that earned the callsign ran ${weatherBits[weather]||''}. ${They} spent it calmly narrating what the opposing team was about to do, while it happened.`
     ],
-    'A daredevil':[
-      `Nobody told ${name} to do it. In fact, at least two people specifically told ${them} not to. ${weatherBits[weather]||''}, ${nameWithColor} decided to find out what would happen. What happened was it worked, the tower went silent, and ${name} landed to a round of applause ${they} probably shouldn't have received.`,
-      `The CO's exact words were, "That was unauthorized, unsafe, and\u2014off the record\u2014the best flying I've seen this year." ${nameWithColor} just grinned. ${They}'d been waiting for that sortie all week.`,
-      `${name} has a habit of asking "${pick(["What's the worst that could happen?","Is that a rule or a guideline?","Has anyone actually tried this?"])}" and then doing the thing before anyone can answer. The name came from one of those moments, ${weatherBits[weather]||''}.`
+    edge:[
+      `Nobody told ${nameWithHobby} to do it. In fact, at least two people told ${them} not to. ${They} decided to find out anyway. It all happened ${weatherBits[weather]||''}. It worked, the tower went silent, and ${name} landed to applause ${they} probably shouldn't have gotten.`,
+      `The CO's exact words were, "That was unauthorized, unsafe, and the best flying I've seen all year." ${nameWithHobby} just grinned. ${They}'d been waiting all week for a sortie like that one. It finally came ${weatherBits[weather]||''}.`,
+      `${nameWithHobby} has a habit of asking "${pick(["What's the worst that could happen?","Is that a rule or a guideline?","Has anyone actually tried this?"])}" and then doing the thing before anyone answers. The callsign came from one of exactly those moments. It all went down ${weatherBits[weather]||''}.`
     ],
-    'The loyal one':[
-      `${nameWithColor} turned the whole formation around because ${pr.their} wingman's radio cut out ${weatherBits[weather]||''}. Didn't hesitate. Flew wing-to-wing and guided them home. When the CO asked why ${they} broke formation, ${name} just said, "That's my wingman."`,
-      `During a training exercise, ${name} gave up ${pr.their} shot at top marks to cover a rookie who was falling behind. Didn't say a word about it afterward. The rookie told everyone though. That's how the name got around.`,
-      `The squadron knows: if you're flying with ${name}, you're coming home. ${They} earned the name after a rough sortie ${weatherBits[weather]||''} where ${they} refused to leave the area until every jet in the flight was accounted for.`
+    heart:[
+      `${nameWithHobby} turned the whole formation around the moment ${pr.their} wingman's radio cut out. No hesitation. The flight was ${weatherBits[weather]||''}. ${name} flew wing-to-wing all the way home, and when the CO asked why ${they} broke formation, ${name} just said, "That's my wingman."`,
+      `During a training exercise, ${nameWithHobby} quietly gave up ${pr.their} shot at top marks to cover a rookie falling behind. The exercise ran ${weatherBits[weather]||''}. ${name} never said a word about it; the rookie told everyone, and that is how the callsign got around.`,
+      `The squadron knows: if you're flying with ${nameWithHobby} you're coming home. ${They} earned the callsign on a rough sortie that ran ${weatherBits[weather]||''}. ${They} refused to leave the area until every jet in the flight was accounted for.`
     ],
-    'Quick-witted':[
-      `${nameWithColor} got the name after a radio exchange that's now quoted on base like scripture. Tower called out a correction, ${name} came back with something so fast and so perfect that the whole frequency went dead for three seconds\u2014then the laughter started. Even the CO keyed the mic to say "Good copy."`,
-      `During a hop ${weatherBits[weather]||''}, something went weird with the avionics. ${name} didn't have time to look it up. ${They} just did the math in ${pr.their} head, called the correction to tower, and nailed it. The maintenance chief still doesn't quite believe the story.`,
-      `Ask ${name} a question and you'll get an answer before you finish the sentence. ${They} earned the call sign the day ${they} talked ${pr.their} way out of a busted approach ${weatherBits[weather]||''} using nothing but mental math and a one-liner that made the controller laugh mid-clearance.`
+    quick:[
+      `${nameWithHobby} got the callsign after a radio exchange that's now quoted on base like scripture. It happened mid-sortie. The flight was running ${weatherBits[weather]||''}. Tower called a correction, and ${name} fired back something so fast the whole frequency went dead for three seconds. Then the laughter started, and even the CO keyed the mic to say "Good copy."`,
+      `Something went weird with the avionics mid-sortie, and ${nameWithHobby} had no time to look it up. The flight was running ${weatherBits[weather]||''}. ${They} did the math in ${pr.their} head, called the correction to tower, and nailed it. The maintenance chief still doesn't quite believe the story.`,
+      `${nameWithHobby} can talk circles around a problem before most people finish reading it. ${They} earned the callsign talking ${pr.their} way out of a busted approach with nothing but mental math and a one-liner. The controller laughed mid-clearance. The sortie that earned it ran ${weatherBits[weather]||''}.`
     ]
   };
 
-  const traitStories = stories[trait] || stories['Cool under pressure'];
-  const meaning = pick(traitStories);
+  // ── Callsign: one word, drawn from the pilot's character (trait) or the
+  //    weather of the moment that earned it ──
+  const callsign = pick([prefix, weatherTag]);
 
   const closers = [
-    `The name was on the duty board by end of day.`,
-    `The squadron voted. It was unanimous.`,
-    `Nobody asked if ${they} liked it. It was already done.`,
-    `The crew chief had it stenciled on the jet by the next morning.`,
-    `Command tried to assign a different one. It didn't take.`,
-    `Word got around fast. Even pilots from other squadrons started using it.`
+    `The new callsign was on the duty board by end of day.`,
+    `The squadron voted on the new callsign. It was unanimous.`,
+    `Nobody asked if ${they} liked the callsign. It was already done.`,
+    `The crew chief had the callsign stenciled on the jet by the next morning.`,
+    `Word reached ${homeCity} before ${name} did.`,
+    `Somewhere back in ${homeCity}, somebody is still telling that story.`
   ];
 
-  const fullMeaning = meaning + ' ' + pick(closers);
+  // ── Personality read: a hidden type blended from every answer ──
+  // Each answer nudges two of six archetypes; the top score decides which
+  // set of stories gets told. Animal, motto and weather all vote, so the
+  // read is shaped by the whole quiz rather than the trait question alone.
+  const archetypeWeights = {
+    'Cool under pressure':['instinct','mind'],
+    'Life of the party':['spark','spark'],
+    'The strategist':['mind','mind'],
+    'A daredevil':['edge','edge'],
+    'The loyal one':['heart','heart'],
+    'Quick-witted':['quick','quick'],
+    'Sports':['instinct','quick'],
+    'Music':['spark','heart'],
+    'Gaming':['quick','mind'],
+    'Outdoors':['instinct','heart'],
+    'Cooking':['heart','spark'],
+    'Reading':['mind','mind'],
+    'Building / Tinkering':['mind','instinct'],
+    'Art / Photography':['spark','instinct'],
+    'Eagle':['instinct','mind'],
+    'Wolf':['heart','edge'],
+    'Shark':['edge','quick'],
+    'Falcon':['quick','instinct'],
+    'Bear':['heart','edge'],
+    'Panther':['edge','instinct'],
+    'Cobra':['edge','quick'],
+    'Phoenix':['spark','edge'],
+    'Clear blue skies':['instinct','spark'],
+    'Through the storm':['edge','heart'],
+    'Golden sunset':['spark','heart'],
+    'Moonlit night':['mind','edge'],
+    'Above the clouds':['mind','instinct'],
+    'Low and fast at dawn':['edge','quick'],
+    'Fortune favors the bold':['edge','spark'],
+    'Stay low, move fast':['quick','edge'],
+    'No guts, no glory':['edge','heart'],
+    'Smooth is fast':['instinct','quick'],
+    'Eyes on the horizon':['mind','heart'],
+    'Born to fly':['instinct','spark']
+  };
+  const archetypeScores = {instinct:0,spark:0,mind:0,edge:0,heart:0,quick:0};
+  [trait, hobby, animal, weather, motto].forEach(ans => {
+    (archetypeWeights[ans] || []).forEach(k => {
+      if(k in archetypeScores) archetypeScores[k]++;
+    });
+  });
+  const topScore = Math.max.apply(null, Object.values(archetypeScores));
+  const archetype = pick(Object.keys(archetypeScores).filter(k => archetypeScores[k] === topScore));
+  let story = pick(stories[archetype]);
+
+  // One-sentence opener that captures the personality type without labeling it
+  const personalityIntros = {
+    instinct:[
+      `Some pilots learn the jet; ${name} just seems to agree with it.`,
+      `${name} flies the way most people walk, with no visible effort and no wasted motion.`,
+      `There is a looseness to ${name} in the cockpit that simply cannot be taught.`
+    ],
+    spark:[
+      `${name} cannot help it; every sortie turns into a little bit of a performance.`,
+      `Some pilots fill a cockpit; ${name} fills a whole flight line.`,
+      `${name} flies like there is an audience, and somehow there always is.`
+    ],
+    mind:[
+      `${name} is always a few minutes into the future, solving what hasn't happened yet.`,
+      `The pause before ${name} keys the mic is never hesitation; it is arithmetic.`,
+      `${name} treats every sortie like a chess problem with the clock running.`
+    ],
+    edge:[
+      `Nobody predicts ${name}, and that includes ${name}.`,
+      `${name} has a gift for finding the exact edge of what's allowed and leaning on it.`,
+      `Routine does not survive first contact with ${name}.`
+    ],
+    heart:[
+      `Ask the squadron who they want on their wing, and the answer is always ${name}.`,
+      `${name} keeps a quiet headcount of the whole flight without ever being asked.`,
+      `There is a steadiness to ${name} that the entire unit quietly leans on.`
+    ],
+    quick:[
+      `${name} answers the question while you're still forming it.`,
+      `${name} thinks at the speed of the radio, and usually a half-beat faster.`,
+      `${name} is always three words ahead of everyone else on the frequency.`
+    ]
+  };
+  const personalityIntro = pick(personalityIntros[archetype]);
+
+  // If the story ends on a sentence about the callsign and the closer also
+  // leads with it, join them with a semicolon instead of repeating the subject.
+  let closer = pick(closers);
+  const lastSentence = story.trim().split(/(?<=\.)\s+(?=["A-Z])/).pop();
+  if(closer.indexOf('The new callsign was') === 0
+     && lastSentence.indexOf('The callsign') === 0
+     && lastSentence.indexOf(';') === -1){
+    story = story.replace(/\.\s*$/, ';');
+    closer = 'it' + closer.slice('The new callsign'.length);
+  }
+
+  const fullMeaning = personalityIntro + ' ' + story + ' ' + closer;
 
   // Render
   document.getElementById('callsignText').textContent = callsign;
   document.getElementById('callsignMeaning').textContent = `"${fullMeaning}"`;
 
-  document.getElementById('resultDetails').innerHTML = `
-    <h3>Pilot Dossier</h3>
-    <div class="detail-row"><span class="detail-label">Name</span><span class="detail-value">${name}</span></div>
-    <div class="detail-row"><span class="detail-label">Region</span><span class="detail-value">${hometown}</span></div>
-    <div class="detail-row"><span class="detail-label">Off-Duty</span><span class="detail-value">${hobby}</span></div>
-    <div class="detail-row"><span class="detail-label">Personality</span><span class="detail-value">${trait}</span></div>
-    <div class="detail-row"><span class="detail-label">Spirit Animal</span><span class="detail-value">${animal}</span></div>
-    <div class="detail-row"><span class="detail-label">Preferred Skies</span><span class="detail-value">${weather}</span></div>
-    <div class="detail-row"><span class="detail-label">Motto</span><span class="detail-value">${motto}</span></div>
-  `;
+  // Log the entry to the spreadsheet
+  logToSheet({
+    timestamp: new Date().toISOString(),
+    name: name,
+    email: answers.email || '',
+    hometown: hometown || '',
+    hobby: hobby,
+    trait: trait,
+    animal: animal,
+    weather: weather,
+    motto: motto,
+    callsign: callsign
+  });
 }
 
 function restart(){

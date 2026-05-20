@@ -228,14 +228,21 @@
     margin-bottom:10px;
     animation:fadeUp .6s ease;
   }
-  /* "Cleared for takeoff" banner above the callsign */
+  /* "Cleared for takeoff" banner above the callsign — sized big enough
+     to function as the primary headline of the result screen, second
+     only to the callsign itself. */
   .cleared-banner{
-    font-family:'Oswald',sans-serif;
-    font-size:1rem;letter-spacing:4px;text-transform:uppercase;
-    color:var(--sky);margin:14px auto 18px;
-    text-shadow:0 0 20px rgba(74,144,196,.3);
+    font-family:'Oswald',sans-serif;font-weight:600;
+    font-size:clamp(1.4rem,4.5vw,2rem);
+    letter-spacing:5px;text-transform:uppercase;
+    color:var(--sky);
+    margin:18px auto 22px;line-height:1.2;
+    text-shadow:0 0 24px rgba(74,144,196,.35);
   }
-  .cleared-banner .pilot-name{color:var(--gold-light)}
+  .cleared-banner .pilot-name{
+    color:var(--gold-light);font-weight:700;
+    text-shadow:0 0 24px rgba(226,201,126,.35);
+  }
 
   /* A/B side-by-side story panels with vote buttons */
   .story-vote-prompt{
@@ -297,6 +304,12 @@
   /* ── inline validation error ── */
   .input-error{
     color:var(--red);font-size:.85rem;margin-top:8px;min-height:1.1em;
+  }
+
+  /* ── per-question consent fine-print (used on the email slide) ── */
+  .question-consent{
+    margin-top:14px;font-size:.78rem;line-height:1.5;
+    color:rgba(240,240,240,.5);font-style:italic;
   }
 
   /* ── share menu ── */
@@ -516,7 +529,8 @@ const questions = [
     number:'Mission Brief 8 of 8',
     text:'Where do we send your clearance? Drop your email.',
     type:'text',
-    placeholder:'you@example.com'
+    placeholder:'you@example.com',
+    consent:'By generating your call sign, you are agreeing to receive communications from the Blue Angels Foundation.'
   }
 ];
 
@@ -619,6 +633,9 @@ function renderQuestion(){
     html += `<input type="text" id="textInput" placeholder="${q.placeholder}" autocomplete="off"
               onkeydown="if(event.key==='Enter')nextQuestion()">`;
     html += `<div class="input-error" id="inputError"></div>`;
+    if(q.consent){
+      html += `<div class="question-consent">${q.consent}</div>`;
+    }
     html += `<div class="btn-row">
               ${current > 0 ? '<button class="btn btn-secondary" onclick="prevQuestion()">Back</button>' : ''}
               <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">

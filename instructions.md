@@ -1,10 +1,9 @@
 # Call Sign Generator — Setup Instructions
 
 The web page (`index.html`) is a static file. On its own it cannot save
-submissions to a spreadsheet or send email — a browser page has no access to
-files or mail. To collect entries to a Google Sheet **and** email each
-participant their call sign, you deploy the Google Apps Script below. It is a
-small, free service that runs on Google's servers.
+submissions to a spreadsheet — a browser page has no access to files. To
+collect entries to a Google Sheet, you deploy the Google Apps Script below. It
+is a small, free service that runs on Google's servers.
 
 Until the script is deployed, the page still works: every submission is saved
 in the browser's local storage as a fallback (see "Fallback" at the bottom).
@@ -40,8 +39,7 @@ Paste this into `Code.gs`:
 ```javascript
 /**
  * Blue Angels Foundation — Call Sign Generator
- * Receives a submission from the web page, appends it to this Sheet,
- * and emails the participant their call sign.
+ * Receives a submission from the web page and appends it to this Sheet.
  */
 
 function doPost(e) {
@@ -63,63 +61,12 @@ function doPost(e) {
                      data.hobby, data.trait, data.animal, data.weather,
                      data.motto, data.callsign, data.story]);
 
-    // Email the participant their call sign.
-    if (data.email) {
-      sendCallSignEmail(data);
-    }
-
     return ContentService.createTextOutput('OK');
   } catch (err) {
     return ContentService.createTextOutput('ERROR: ' + err);
   } finally {
     lock.releaseLock();
   }
-}
-
-function sendCallSignEmail(data) {
-  var callsign = data.callsign || 'PILOT';
-  var name = data.name || 'Pilot';
-  var story = String(data.story || '').replace(/^"|"$/g, ''); // strip wrapping quotes
-
-  var disclaimer =
-    'The Blue Angels Foundation is a 501(c)(3) charitable nonprofit ' +
-    'corporation consisting of former members of the United States Navy ' +
-    'Flight Demonstration Squadron, “The Blue Angels,” and is not ' +
-    'part of the United States Navy. No endorsement, express or implied, of ' +
-    'the BAF or its activities is made by the Department of Defense, the ' +
-    'Department of the Navy, or the Navy Flight Demonstration Squadron.';
-
-  var html =
-    '<div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;' +
-      'margin:0 auto;background:#0a1628;color:#f0f0f0;padding:32px 28px;">' +
-      '<p style="color:#4a90c4;letter-spacing:2px;text-transform:uppercase;' +
-        'font-size:12px;margin:0 0 6px;">Blue Angels Foundation</p>' +
-      '<p style="font-size:15px;margin:0 0 16px;">Cleared for takeoff, ' +
-        esc(name) + '. Your call sign is:</p>' +
-      '<p style="font-size:40px;font-weight:bold;letter-spacing:3px;' +
-        'color:#ffd700;margin:0 0 20px;">' + esc(callsign) + '</p>' +
-      '<p style="font-size:14px;line-height:1.7;color:#dcdcdc;' +
-        'font-style:italic;">' + esc(story) + '</p>' +
-      '<p style="font-size:13px;margin-top:24px;">Thank you for supporting ' +
-        'the Blue Angels Foundation.</p>' +
-      '<p style="font-size:10px;line-height:1.5;color:#888;margin-top:28px;' +
-        'border-top:1px solid #1e3a5f;padding-top:14px;">' +
-        esc(disclaimer) + '</p>' +
-    '</div>';
-
-  MailApp.sendEmail({
-    to: data.email,
-    subject: 'Your Blue Angels call sign: ' + callsign,
-    htmlBody: html,
-    name: 'Blue Angels Foundation'
-  });
-}
-
-function esc(s) {
-  return String(s == null ? '' : s)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
 }
 ```
 
@@ -135,7 +82,7 @@ function esc(s) {
 5. Google asks you to **authorize**. Click through, choose your account, and
    on the "Google hasn't verified this app" screen click **Advanced ▸ Go to
    (project name)**, then **Allow**. You are granting the script permission to
-   edit the Sheet and send email *as you* — this is expected.
+   edit the Sheet *as you* — this is expected.
 6. Copy the **Web app URL**. It looks like
    `https://script.google.com/macros/s/AKfy...../exec`.
 
@@ -158,9 +105,8 @@ function esc(s) {
 
 ## Step 6 — Test
 
-1. Open `index.html` and complete the quiz with an email address you can check.
+1. Open `index.html` and complete the quiz.
 2. Confirm a new row appears in the Google Sheet.
-3. Confirm the confirmation email arrives (check spam the first time).
 
 Done.
 
@@ -172,11 +118,6 @@ Done.
   app does **not** update automatically. Go to **Deploy ▸ Manage deployments**,
   click the pencil ✏️, set **Version** to **New version**, and **Deploy**. The
   URL stays the same.
-- **Daily email limit:** a free Gmail account can send ~100 emails/day; a
-  Google Workspace account ~1,500/day. Beyond that, emails stop sending for the
-  day (the Sheet still records every entry).
-- **The "from" address** on the emails is the Google account that owns the
-  script.
 - The page sends data "fire-and-forget" (it does not wait for a reply), so a
   slow script never blocks the participant from seeing their call sign.
 
